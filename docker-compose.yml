@@ -1,0 +1,30 @@
+version: "3.1"
+services:
+
+  schibsted_backend:
+    container_name: backend
+    image: shibsted/backend
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    command: ["node", "--inspect=0.0.0.0", "app/index.js"]
+    environment:
+      - "NODE_ENV=debug"
+    env_file:
+      - "./env/backend.env"
+    ports:
+      - "8080:8080"
+      - "9229:9229"
+    depends_on:
+      - schibsted_database
+
+  schibsted_database:
+    container_name: database
+    image: mongo:3-xenial
+    env_file:
+      - "./env/database.env"
+    volumes:
+      - "database:/data/db"
+
+volumes:
+  database:

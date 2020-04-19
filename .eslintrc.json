@@ -6,7 +6,7 @@
     },
     "extends": [
         "plugin:react/recommended",
-        "standard"
+        "eslint:recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -25,5 +25,14 @@
         "@typescript-eslint"
     ],
     "rules": {
+        // I prefer double quotes because I commonly use 2-4 different programing languages
+        // some of them distinguishes single quoted string (which is single char/rune) from double quotes (which are string)
+        // In javascript double quotes does not have templating (like for example php) so it's safe to replace it later
+        // Replacement could be done by simple regexp or by eslint --fix
+        "quotes": [1, "double"],
+        // shows error when using property declaration in constructor and constructor body is empty
+        "no-useless-constructor": "off",
+        // let typescipt hadle which variable is unused. eslint have troubles with interfaces
+        "no-unused-vars": "off"
     }
 }
