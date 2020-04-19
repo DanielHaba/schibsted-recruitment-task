@@ -21,4 +21,4 @@ RUN yarn webpack
 
 EXPOSE 8080
 USER node:node
-CMD ["app/index.js"]
+CMD ["yarn" "start"]

@@ -1,17 +1,28 @@
-import { IIssueRepository, IIssue } from "../issue";
+import { IIssueRepository, IIssue, IIssuePersistor, IssueState } from "../issue";
 
-export class IssueMockedRepository implements IIssueRepository {
+export class IssueMockedSource implements IIssueRepository, IIssuePersistor {
     public constructor (
-        private records: IIssue[]
+        private records: IIssue[],
     ) {}
 
+    public save(issue: Partial<IIssue>): Promise<void> {
+        const index = this.findById(issue._id);
+        if (index < 0) {
+            this.records[index] = {
+                _id: this.records.length,
+                title: "",
+                description: "",
+                state: IssueState.Open,
+            };
+        }
+        Object.assign(this.records[index], issue);
+        return Promise.resolve();
+    }
+
     public getById(id: any): Promise<IIssue> {
-        for (const issue of this.records) {
-            // i used double euql sign because i want type correction
-            // eslint-disable-next-line eqeqeq
-            if (issue._id == id) {
-                return Promise.resolve(issue);
-            }
+        const index = this.findById(id);
+        if (index >= 0) {
+            return Promise.resolve(this.records[index]);
         }
         return Promise.reject(
             new Error(`Issue with id ${id} not found`)
@@ -20,5 +31,11 @@ export class IssueMockedRepository implements IIssueRepository {
 
     public getAll(): Promise<IIssue[]> {
         return Promise.resolve(this.records);
+    }
+
+    private findById(id: any): number {
+        // i used double equal sign because i want type correction
+        // eslint-disable-next-line eqeqeq
+        return this.records.findIndex((issue) => issue._id == id);
     }
 }

@@ -33,6 +33,7 @@
         // shows error when using property declaration in constructor and constructor body is empty
         "no-useless-constructor": "off",
         // let typescipt hadle which variable is unused. eslint have troubles with interfaces
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "no-undef": "off"
     }
 }
