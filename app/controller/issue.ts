@@ -77,7 +77,6 @@ export class IssueController {
 
     private async update(req: express.Request, res: express.Response): Promise<void> {
         try {
-            debugger;
             const issue = await this.repository.getById(req.params.id);
             const prevState = issue.state;
             Object.assign(issue, this.extractData(req));
@@ -122,7 +121,7 @@ export class IssueController {
         if (!issue.description || issue.description.length > 2048) {
             return new Error("description cannot be empty and have to be shorter than 2048 characters");
         }
-        if (!isIssueStateAllowed(issue.state, prevState)) {
+        if (!isIssueStateAllowed(prevState, issue.state)) {
             return new Error("unallowed issue state");
         }
         return null;

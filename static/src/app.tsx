@@ -6,6 +6,7 @@ import { IIssue } from "../../app/model/issue";
 import { IssueIndexPage } from "./pages/issue";
 import { IssueViewPage } from "./pages/issue/view";
 import { IssueCreatePage } from "./pages/issue/create";
+import { Navbar } from "./component/common/nav";
 
 
 export class Application extends React.Component {
@@ -25,9 +26,13 @@ export class Application extends React.Component {
         return (
             <AppContext.Provider value={this.appCtx}>
                 <Router>
-                    <Route exact path="/" component={IssueIndexPage} />
-                    <Route exact path="/new-issue" component={IssueCreatePage} />
-                    <Route path="/issue/:id" component={IssueViewPage} />
+                    <Navbar />
+                    <br/>
+                    <div className="container">
+                        <Route exact path="/" component={IssueIndexPage} />
+                        <Route exact path="/new-issue" component={IssueCreatePage} />
+                        <Route path="/issue/:id" component={IssueViewPage} />
+                    </div>
                 </Router>
             </AppContext.Provider>
         );

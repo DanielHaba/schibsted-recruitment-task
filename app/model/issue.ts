@@ -34,6 +34,6 @@ export function getIssueAllowedStates(state: IssueState): IssueState[] {
     }
 }
 
-export function isIssueStateAllowed(prevState: IssueState|undefined, newState: IssueState): boolean {
-    return typeof(prevState) !== "undefined" && getIssueAllowedStates(prevState).includes(newState);
+export function isIssueStateAllowed(prevState: IssueState, newState?: IssueState): boolean {
+    return typeof(newState) !== "undefined" && getIssueAllowedStates(prevState).includes(newState);
 }

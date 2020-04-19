@@ -15,15 +15,15 @@ export class NewIssue extends React.Component<{}, NewIssueState> {
         const state = this.state || {};
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
-                <div className="field">
+                <div className="form-group">
                     <label htmlFor="issue-title">Title</label>
-                    <input id="issue-title" value={state.title} onChange={this.onTitleChange.bind(this)} />
+                    <input id="issue-title" className="form-control" value={state.title} onChange={this.onTitleChange.bind(this)} />
                 </div>
-                <div className="field">
+                <div className="form-group">
                     <label htmlFor="issue-description">Description</label>
-                    <input id="issue-description" value={state.description} onChange={this.onDescriptionChange.bind(this)} />
+                    <textarea id="issue-description" className="form-control" onChange={this.onDescriptionChange.bind(this)} value={state.description}/>
                 </div>
-                <button type="submit" disabled={state.locked}>Submit</button>
+                <button type="submit" className="btn btn-primary" disabled={state.locked}>Submit</button>
             </form>
         );
     }
@@ -32,7 +32,7 @@ export class NewIssue extends React.Component<{}, NewIssueState> {
         this.setState({ title: e.target.value });
     }
 
-    private onDescriptionChange(e: React.ChangeEvent<HTMLInputElement>) {
+    private onDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({ description: e.target.value });
     }
 
@@ -44,12 +44,16 @@ export class NewIssue extends React.Component<{}, NewIssueState> {
     private async submit() {
         this.setState({ locked: true });
         const ctx = getAppContext(this);
-        await ctx.issuePersistor.save(this.state);
-        this.setState({ 
-            title: "",
-            description: "",
-            locked: false 
-        });
+        try {
+            await ctx.issuePersistor.save(this.state);
+            this.setState({
+                title: "",
+                description: "",
+            });
+            alert("Issue created");
+        } finally {
+            this.setState({ locked: false });
+        }
     }
 }
 

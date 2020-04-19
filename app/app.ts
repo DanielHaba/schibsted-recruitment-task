@@ -113,7 +113,16 @@ export class Application {
 
         this.app.get("*", (req, res) => {
             if (req.accepts("html")) {
-                res.sendFile(path.join(staticPath, "index.html"), res.end.bind(res));
+                res.sendFile(path.join(staticPath, "index.html"), (err) => {
+                    if (err) {
+                        res.status(500);
+                        res.send("Something went wrong");
+                        if (this.services.logger) {
+                            this.services.logger.error(err.message);
+                        }
+                    }
+                    res.end();
+                });
             } else {
                 res.status(404);
                 res.send("Not found");

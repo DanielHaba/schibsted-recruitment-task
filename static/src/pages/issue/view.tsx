@@ -2,7 +2,7 @@ import React from "react";
 import { IIssue } from "../../../../app/model/issue";
 import { getAppContext, AppContext } from "../../context";
 import { IssueView } from "../../component/issue/view";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 interface IssueViewWrapperProps {
     id: any;
@@ -35,9 +35,8 @@ class IssueViewWrapper extends React.Component<IssueViewWrapperProps, IssueViewW
                 <section>
                     <h3>Issue #{this.props.id}</h3>
                     <main>
-                        <IssueView issue={this.state.issue} editable={true} />
+                        <IssueView issue={this.state.issue} editable={true} onUpdate={this.update.bind(this)} />
                     </main>
-                    <Link to="/">Back to issue list</Link>
                 </section>
             );
         }
