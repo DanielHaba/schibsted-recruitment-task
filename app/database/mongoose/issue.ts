@@ -3,7 +3,7 @@ import { IIssue } from "../../model/issue"
 
 export const IssueSchema = new mongoose.Schema({
     title: String,
-    content: String,
+    description: String,
     state: String,
 });
 

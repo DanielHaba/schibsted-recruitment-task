@@ -1,4 +1,4 @@
-import { IIssueRepository, IssueState, IIssuePersistor, IIssue } from "../model/issue";
+import { IIssueRepository, IssueState, IIssuePersistor, IIssue, isIssueStateAllowed } from "../model/issue";
 import * as express from "express";
 import { IServices } from "../services";
 import winston from "winston";
@@ -56,8 +56,14 @@ export class IssueController {
     public async create(req: express.Request, res: express.Response): Promise<void> {
         try {
             const issue = this.extractData(req);
-            issue.state = IssueState.Pending;
-            await this.persistor.save(issue);
+            issue.state = IssueState.Open;
+            const err  = this.validate(issue, IssueState.Open);
+            if (err) {
+                res.status(400);
+                res.json({ message: err.message });
+            } else {
+                await this.persistor.save(issue);
+            }
             res.end();
         } catch (err) {
             if (this.logger) {
@@ -71,9 +77,18 @@ export class IssueController {
 
     private async update(req: express.Request, res: express.Response): Promise<void> {
         try {
+            debugger;
             const issue = await this.repository.getById(req.params.id);
+            const prevState = issue.state;
             Object.assign(issue, this.extractData(req));
-            this.persistor.save(issue);
+            const err = this.validate(issue, prevState);
+            if (err) {
+                res.status(400);
+                res.json({ message: err.message });
+            } else {
+                await this.persistor.save(issue);
+            }
+            res.end();
         } catch (err) {
             if (this.logger) {
                 this.logger.error(err);
@@ -85,10 +100,31 @@ export class IssueController {
     }
 
     private extractData(req: express.Request): Partial<IIssue> {
-        return {
-            title: req.body.title,
-            description: req.body.description,
-            state: req.body.state,
-        };
+        const data: Partial<IIssue> = {};
+        if (req.body.title) {
+            // quick string casting
+            data.title = "" + req.body.title;
+        }
+        if (req.body.description) {
+            data.description = "" + req.body.description;
+        }
+        if (req.body.state) {
+            data.state = req.body.state;
+        }
+
+        return data;
+    }
+
+    private validate(issue: Partial<IIssue>, prevState: IssueState): Error|null {
+        if (!issue.title || issue.title.length < 4 || issue.title.length > 64) {
+            return new Error("title cannot be empty and have to be between 4 and 64 characters");
+        }
+        if (!issue.description || issue.description.length > 2048) {
+            return new Error("description cannot be empty and have to be shorter than 2048 characters");
+        }
+        if (!isIssueStateAllowed(issue.state, prevState)) {
+            return new Error("unallowed issue state");
+        }
+        return null;
     }
 }

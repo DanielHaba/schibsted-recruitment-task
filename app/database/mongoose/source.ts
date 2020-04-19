@@ -24,7 +24,7 @@ export class MongooseDatabaseSource<T extends {}> {
             .exec();
     }
 
-    public async save(obj: T): Promise<void> {
+    public save(obj: T): Promise<void> {
         return obj instanceof mongoose.Document
             ? this.update(obj)
             : this.create(obj);

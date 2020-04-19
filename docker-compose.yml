@@ -12,6 +12,8 @@ services:
       - "NODE_ENV=debug"
     env_file:
       - "./env/backend.env"
+    volumes:
+      - "./static:/var/www/html/static"
     ports:
       - "8080:8080"
       - "9229:9229"

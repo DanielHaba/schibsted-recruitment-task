@@ -1,10 +1,10 @@
 import * as express from "express" ;
 import { IssueController } from "./controller/issue";
-import * as winston from "winston";
 import * as winstonMiddleware from "express-winston";
 import mongoose from "mongoose";
 import { IServices } from "./services";
 import bodyParser from "body-parser";
+import * as path from "path";
 
 export interface AppConfig {
     port: number;
@@ -13,6 +13,7 @@ export interface AppConfig {
     dbUser: string;
     dbPort: number;
     dbPassword: string;
+    staticPath: string;
 }
 
 interface IController {
@@ -48,6 +49,7 @@ export class Application {
     private async setup () {
         this.app.use(bodyParser.urlencoded());
         this.app.use(bodyParser.json());
+        
         this.setupLogger();
         await this.setupDatabase();
         this.setupRouting();
@@ -91,22 +93,15 @@ export class Application {
                 winstonInstance: this.services.logger,
             }));
         }
-
-        this.app.use(winstonMiddleware.logger({
-
-            transports: [
-                new winston.transports.Console(),
-            ],
-            format: winston.format.combine(
-                winston.format.colorize(),
-                winston.format.json(),
-            ),
-            expressFormat: true,
-            colorize: true,
-        }))
     }
 
     private setupRouting () {
+        const staticPath = path.isAbsolute(this.config.staticPath)
+            ? this.config.staticPath
+            : path.join(process.cwd(), this.config.staticPath);
+
+        this.app.use(express.static(staticPath));
+
         const controllers = this.Controllers.map(
             (factory) => new factory(this.services).mount()
         );
@@ -115,5 +110,15 @@ export class Application {
             "/api",
             ...controllers,
         );
+
+        this.app.get("*", (req, res) => {
+            if (req.accepts("html")) {
+                res.sendFile(path.join(staticPath, "index.html"), res.end.bind(res));
+            } else {
+                res.status(404);
+                res.send("Not found");
+                res.end();
+            }
+        });
     }
 }

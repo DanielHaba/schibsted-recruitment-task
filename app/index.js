@@ -43,6 +43,7 @@
         dbName: process.env.APP_DATABASE_NAME || "issue_tracker",
         dbUser: process.env.APP_DATABASE_USER,
         dbPassword: process.env.APP_DATABASE_PASSWORD,
+        staticPath: process.env.APP_STATIC_PATH || "static",
     });
 
     app.run();
