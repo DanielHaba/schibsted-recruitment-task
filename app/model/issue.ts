@@ -1,4 +1,6 @@
 
+// Enums are great, take it to javascript standard, please!
+// Even without typing they sightly improve code readability
 export enum IssueState {
     Open = "open",
     Pending = "pending",
