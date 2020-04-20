@@ -7,7 +7,7 @@ export class IssueController {
 
     private repository: IIssueRepository;
     private persistor: IIssuePersistor;
-    private logger: winston.Logger;
+    private logger?: winston.Logger;
 
     // in pure js we don't have visibility modifier so they should be removed from javascript code.
     // using visibility modifier before the constructor parameter creates the property with parameter name and specified visibility. it also automatically assigns parameter to a property

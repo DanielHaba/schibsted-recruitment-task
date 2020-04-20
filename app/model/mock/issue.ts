@@ -5,11 +5,20 @@ export class IssueMockedSource implements IIssueRepository, IIssuePersistor {
         private records: IIssue[],
     ) {}
 
+    public setRecords(records: IIssue[]) {
+        this.records = records;
+    }
+
+    public getRecords(): IIssue[] {
+        return this.records;
+    }
+
     public save(issue: Partial<IIssue>): Promise<void> {
-        const index = this.findById(issue._id);
+        let index = this.findById(issue._id);
         if (index < 0) {
+            index = this.records.length;
             this.records[index] = {
-                _id: this.records.length,
+                _id: index + 1,
                 title: "",
                 description: "",
                 state: IssueState.Open,

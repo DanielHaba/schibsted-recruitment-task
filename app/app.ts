@@ -33,7 +33,11 @@ export class Application {
         private services: IServices,
         private config: AppConfig,
         private app: express.Application = express.default(),
-    ) {}
+    ) {
+        this.app.use(bodyParser.urlencoded());
+        this.app.use(bodyParser.json());
+        this.setupRouting();
+    }
 
     public run () {
         const onStart = () => {
@@ -46,13 +50,9 @@ export class Application {
         })
     }
 
-    private async setup () {
-        this.app.use(bodyParser.urlencoded());
-        this.app.use(bodyParser.json());
-        
+    public async setup () {
         this.setupLogger();
         await this.setupDatabase();
-        this.setupRouting();
     }
 
     private async setupDatabase () {
